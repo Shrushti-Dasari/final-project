@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCBI Sequence Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="button"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        #sequenceInfo {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>NCBI Sequence Information</h1>
+    <form id="sequenceForm">
+        <label for="accessionId">Accession ID:</label><br>
+        <input type="text" id="accessionId" name="accessionId" placeholder="Enter Accession ID..." required><br><br>
+
+        <input type="button" value="Get Sequence Information" onclick="getSequenceInfo()">
+    </form>
+
+    <div id="sequenceInfo"></div>
+
+    <script>
+        function getSequenceInfo() {
+            var accessionId = document.getElementById("accessionId").value.trim();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=" + accessionId + "&rettype=fasta");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var sequenceInfo = xhr.responseText;
+                    document.getElementById("sequenceInfo").innerHTML = "<pre>" + sequenceInfo + "</pre>";
+                } else {
+                    document.getElementById("sequenceInfo").innerText = "Error fetching sequence information.";
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+
+</html>
