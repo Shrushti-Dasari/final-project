@@ -1,0 +1,31 @@
+from Bio.Align import PairwiseAligner
+
+
+def detect_snps(reference_sequence, query_sequence):
+    aligner = PairwiseAligner()
+    alignments = aligner.align(reference_sequence, query_sequence)
+
+    # Extract aligned sequences
+    aligned_ref, aligned_query = alignments[0]
+
+    # Identify SNPs
+    snp_positions = [
+        i for i in range(len(aligned_ref)) if aligned_ref[i] != aligned_query[i]
+    ]
+
+    return snp_positions
+
+
+# Example usage:
+if __name__ == "__main__":
+    # Reference sequence
+    reference_sequence = input("Enter reference sequence here = ")
+
+    # Query sequence with a SNP at position 5 (0-based index)
+    query_sequence_with_snp = input("Enter query sequence here = ")
+
+    # Detect SNPs
+    snp_positions = detect_snps(reference_sequence, query_sequence_with_snp)
+
+    # Print SNP positions
+    print("SNP positions:", snp_positions)
