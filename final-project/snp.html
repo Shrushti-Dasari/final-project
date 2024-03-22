@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNP Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        input[type="button"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SNP Detection</h1>
+    <form id="snpForm">
+        <label for="referenceSequence">Reference Sequence:</label><br>
+        <textarea id="referenceSequence" name="referenceSequence" rows="4" cols="50"
+            placeholder="Enter reference sequence here..."></textarea><br><br>
+
+        <label for="querySequence">Query Sequence:</label><br>
+        <textarea id="querySequence" name="querySequence" rows="4" cols="50"
+            placeholder="Enter query sequence here..."></textarea><br><br>
+
+        <input type="button" value="Detect SNPs" onclick="detectSNPs()">
+    </form>
+
+    <div class="output" id="outputDiv">
+        <h2>SNP Positions:</h2>
+        <p id="snpPositions"></p>
+    </div>
+
+    <script>
+        function detectSNPs() {
+            var referenceSeq = document.getElementById("referenceSequence").value.toUpperCase();
+            var querySeq = document.getElementById("querySequence").value.toUpperCase();
+
+            var snpPositions = [];
+
+            for (var i = 0; i < referenceSeq.length; i++) {
+                if (referenceSeq[i] !== querySeq[i]) {
+                    snpPositions.push(i + 1); // Adding 1 to convert index to position
+                }
+            }
+
+            document.getElementById("snpPositions").innerText = "SNP Positions: " + snpPositions.join(", ");
+        }
+    </script>
+</body>
+
+</html>
