@@ -1,0 +1,131 @@
+from Bio import AlignIO, SeqIO
+from Bio.Align.Applications import ClustalOmegaCommandline
+from Bio import SeqIO
+
+# import os
+
+# Get input FASTA file path from user
+input_file_path = input("Enter the path to the input FASTA file: ")
+
+
+# Dictionary to store sequences
+sequences = {}
+
+# Read sequences from the input file
+try:
+    # Read sequences and store them in the dictionary
+    for record in SeqIO.parse(input_file_path, "fasta"):
+        sequences[record.id] = record.seq
+
+    # Print the sequences
+    for species, sequence in sequences.items():
+        print(f"{species}: {sequence}")
+
+except FileNotFoundError:
+    print("File not found.")
+
+output_file = "sequences.fasta"
+with open(output_file, "w") as f:
+    for species, sequence in sequences.items():
+        f.write(f">{species}\n{sequence}\n")
+
+print(f"Sequences written to {output_file}")
+
+# if os.path.exists(output_file):
+#     os.remove(output_file)
+
+clustalomega_cline = ClustalOmegaCommandline(
+    infile="sequences.fasta",
+    outfile="align81_fasta",
+    verbose=True,
+    auto=True,
+)
+stdout, stderr = clustalomega_cline()
+
+alignment = AlignIO.read("align81_fasta", "fasta")
+for record in alignment:
+    print(record.id)
+    print(record.seq)
+
+
+from Bio import Phylo, SeqIO, AlignIO
+from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
+
+# Perform the distance-based tree construction
+calculator = DistanceCalculator("identity")
+distance_matrix = calculator.get_distance(alignment)
+constructor = DistanceTreeConstructor(calculator, "upgma")
+tree = constructor.build_tree(alignment)
+
+# Output the tree in ASCII format
+print("Phylogenetic Tree:")
+Phylo.draw_ascii(tree)
+
+
+# Perform multiple sequence alignment and output in CLUSTAL format
+alignment_file = "aligned_sequences.clustal"
+AlignIO.write(alignment, alignment_file, "clustal")
+
+print(f"Alignment saved to {alignment_file} in CLUSTAL format.")
+
+
+# ----------------------------------------------------------------------------------
+
+# from Bio import Phylo, SeqIO
+# # from Bio.Align import MultipleSeqAlignment
+# from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
+# from Bio.Phylo.TreeConstruction import ParsimonyScorer, ParsimonyTreeConstructor
+
+
+# # Read the alignment from a FASTA file
+# alignment = MultipleSeqAlignment(SeqIO.parse("aligned_sequences.newfasta", "fasta"))
+
+# Get user input to select the method for constructing the phylogenetic tree
+# method = input(
+#     "Select a method for constructing the phylogenetic tree (distance/parsimony): "
+# ).lower()
+
+# if method == "distance":
+#     # Calculate the distance matrix
+#     calculator = DistanceCalculator("identity")
+#     distance_matrix = calculator.get_distance(alignment)
+
+#     # Construct the tree using the UPGMA method
+#     constructor = DistanceTreeConstructor(calculator, "upgma")
+#     tree = constructor.build_tree(alignment)
+
+# elif method == "parsimony":
+#     # Construct the tree using the Parsimony method
+#     scorer = ParsimonyScorer()
+#     constructor = ParsimonyTreeConstructor()
+#     tree = constructor.build_tree(alignment)
+
+# else:
+#     print("Invalid method selected. Please select from 'distance', 'parsimony'.")
+
+# # Draw the phylogenetic tree
+# Phylo.draw_ascii(tree)
+
+
+# from Bio.Phylo.TreeConstruction import DistanceMatrix, ParsimonyScorer, NNITreeSearch, ParsimonyTreeConstructor
+
+# # Assuming you already have an alignment named 'alignment'
+
+# # Create a distance matrix from the alignment
+# calculator = DistanceCalculator("identity")
+# distance_matrix = calculator.get_distance(alignment)
+
+# # Define the parsimony scorer
+# scorer = ParsimonyScorer()
+
+# # Create a tree search algorithm (NNI) using the distance matrix
+# searcher = NNITreeSearch(distance_matrix)
+
+# # Create a ParsimonyTreeConstructor object with the scorer and searcher
+# constructor = ParsimonyTreeConstructor(scorer, searcher)
+
+# # Build the parsimony tree
+# parsimony_tree = constructor.build_tree(alignment)
+
+# # Print or visualize the parsimony tree
+# print(parsimony_tree)
